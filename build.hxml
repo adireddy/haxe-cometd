@@ -1,7 +1,0 @@
--cp sample
--main Main
--js sample/cometd-sample.js
-
--debug
--dce full
--D source-map-content
