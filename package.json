@@ -1,5 +1,5 @@
 {
-  "name": "cometd",
+  "name": "cometdjs",
   "version": "1.0.0",
   "description": "cometd externs",
   "scripts": {
@@ -11,7 +11,8 @@
   },
   "keywords": [
     "haxe",
-    "javascript"
+    "javascript",
+    "socket"
   ],
   "author": {
     "name": "Adi Reddy Mora",

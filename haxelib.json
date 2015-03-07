@@ -1,0 +1,13 @@
+{
+  "name": "cometdjs",
+  "license": "MIT",
+  "tags": ["js","haxe","cometd","extern","web", "socket"],
+  "description": "Externs of CometD for Haxe, a scalable comet (server push) implementation for the web.",
+  "contributors": ["adireddy"],
+  "releasenote": "initial release",
+  "version": "1.0.0",
+  "url": "https://github.com/adireddy/haxe-cometd",
+  "dependencies": {
+
+  }
+}

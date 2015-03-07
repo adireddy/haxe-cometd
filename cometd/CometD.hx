@@ -30,6 +30,11 @@ extern class CometD {
 	var websocketEnabled:Bool;
 
 	/**
+     * Returns whether this instance has been disconnected.
+     */
+	var isDisconnected:Bool;
+
+	/**
      * Registers the given transport under the given transport type.
      * The optional index parameter specifies the "priority" at which the
      * transport is registered (where 0 is the max priority).
@@ -80,7 +85,7 @@ extern class CometD {
      * @param handshakeProps an object to be merged with the handshake message
      * @param handshakeCallback a function to be invoked when the handshake is acknowledged
      */
-	function handshake(handshakeProps:Dynamic, handshakeCallback:Dynamic):Void;
+	function handshake(handshakeProps:Dynamic, ?handshakeCallback:Dynamic):Void;
 
 	/**
      * Disconnects from the Bayeux server.
@@ -91,7 +96,7 @@ extern class CometD {
      * @param disconnectProps an object to be merged with the disconnect message
      * @param disconnectCallback a function to be invoked when the disconnect is acknowledged
      */
-	function disconnect(sync:Dynamic, disconnectProps:Dynamic, disconnectCallback:Dynamic):Void;
+	function disconnect(sync:Dynamic, ?disconnectProps:Dynamic, ?disconnectCallback:Dynamic):Void;
 
 	/**
      * Marks the start of a batch of application messages to be sent to the server
@@ -161,7 +166,50 @@ extern class CometD {
      * @param unsubscribeProps an object to be merged with the unsubscribe message
      * @param unsubscribeCallback a function to be invoked when the unsubscription is acknowledged
      */
-	function unsubscribe(subscription:Dynamic, unsubscribeProps:Dynamic, unsubscribeCallback:Dynamic):Void;
+	function unsubscribe(subscription:Dynamic, ?unsubscribeProps:Dynamic, ?unsubscribeCallback:Dynamic):Void;
+
+	function resubscribe(subscription:Dynamic, ?subscribeProps:Dynamic):Dynamic;
+
+	/**
+     * Removes all subscriptions added via {@link #subscribe(channel, scope, callback, subscribeProps)},
+     * but does not remove the listeners added via {@link addListener(channel, scope, callback)}.
+     */
+	function clearSubscriptions():Void;
+
+	/**
+     * Publishes a message on the given channel, containing the given content.
+     * @param channel the channel to publish the message to
+     * @param content the content of the message
+     * @param publishProps an object to be merged with the publish message
+     * @param publishCallback a function to be invoked when the publish is acknowledged by the server
+     */
+	function publish(channel:Dynamic, content:Dynamic, ?publishProps:Dynamic, ?publishCallback:Dynamic):Void;
+
+	/**
+     * Returns a string representing the status of the bayeux communication with the Bayeux server.
+     */
+	function getStatus():String;
+
+	/**
+     * Sets the backoff period used to increase the backoff time when retrying an unsuccessful or failed message.
+     * Default value is 1 second, which means if there is a persistent failure the retries will happen
+     * after 1 second, then after 2 seconds, then after 3 seconds, etc. So for example with 15 seconds of
+     * elapsed time, there will be 5 retries (at 1, 3, 6, 10 and 15 seconds elapsed).
+     * @param period the backoff period to set
+     * @see #getBackoffIncrement()
+     */
+	function setBackoffIncrement(period:Float):Void;
+
+	/**
+     * Returns the backoff period used to increase the backoff time when retrying an unsuccessful or failed message.
+     * @see #setBackoffIncrement(period)
+     */
+	function getBackoffIncrement ():Float;
+
+	/**
+     * Returns the backoff period to wait before retrying an unsuccessful or failed message.
+     */
+	function getBackoffPeriod():Float;
 
 	/**
      * Sets the log level for console logging.
@@ -170,4 +218,63 @@ extern class CometD {
      * @param level the log level string
      */
 	function setLogLevel(level:String):Void;
+
+	/**
+     * Registers an extension whose callbacks are called for every incoming message
+     * (that comes from the server to this client implementation) and for every
+     * outgoing message (that originates from this client implementation for the
+     * server).
+     * The format of the extension object is the following:
+     * <pre>
+     * {
+     *     incoming: function(message) { ... },
+     *     outgoing: function(message) { ... }
+     * }
+     * </pre>
+     * Both properties are optional, but if they are present they will be called
+     * respectively for each incoming message and for each outgoing message.
+     * @param name the name of the extension
+     * @param extension the extension to register
+     * @return true if the extension was registered, false otherwise
+     * @see #unregisterExtension(name)
+     */
+	function registerExtension(name:String, extension:Dynamic):Bool;
+
+	/**
+     * Unregister an extension previously registered with
+     * {@link #registerExtension(name, extension)}.
+     * @param name the name of the extension to unregister.
+     * @return true if the extension was unregistered, false otherwise
+     */
+	function unregisterExtension(name:String):Bool;
+
+	/**
+     * Find the extension registered with the given name.
+     * @param name the name of the extension to find
+     * @return the extension found or null if no extension with the given name has been registered
+     */
+	function getExtension(name:String):Dynamic;
+
+	/**
+     * Returns the name assigned to this CometD object, or the string 'default'
+     * if no name has been explicitly passed as parameter to the constructor.
+     */
+	function getName():String;
+
+	/**
+     * Returns the clientId assigned by the Bayeux server during handshake.
+     */
+	function getClientId():Dynamic;
+
+	/**
+     * Returns the URL of the Bayeux server.
+     */
+	function getURL():String;
+
+
+	function getTransport():Dynamic;
+
+	function getConfiguration():Dynamic;
+
+	function getAdvice():Dynamic;
 }
